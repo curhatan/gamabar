@@ -1,0 +1,10 @@
+{
+  "name": "upscale-action",
+  "version": "1.0.0",
+  "description": "Helper scripts to upscale images with sharp for GitHub Actions",
+  "main": "upscale.js",
+  "license": "MIT",
+  "dependencies": {
+    "sharp": "^0.32.1"
+  }
+}
