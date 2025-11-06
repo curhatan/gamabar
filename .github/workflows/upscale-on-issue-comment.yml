@@ -1,0 +1,38 @@
+name: Upscale image on issue comment
+
+on:
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  upscale:
+    # only run when comment starts with /upscale (case-insensitive)
+    if: startsWith(toLower(github.event.comment.body), '/upscale')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js 18
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install system deps and Node deps for action
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libvips-dev
+          cd .github/actions
+          npm ci
+
+      - name: Run upscale action
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          COMMENT_BODY: ${{ github.event.comment.body }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          REPOSITORY: ${{ github.repository }}
+        run: node .github/actions/upscale.js
